@@ -4,7 +4,6 @@ import Sidebar from '../components/Sidebar';
 import WorkerList from '../components/WorkerList';
 import ReviewQueue from '../components/ReviewQueue';
 import CompletedWork from '../components/CompletedWork';
-import CreateUser from '../pages/CreateUser';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();

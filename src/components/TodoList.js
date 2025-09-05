@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import CompletionModal from './CompletionModal';
-import TaskDetailModal from './TaskDetailModal';
 
 const TodoList = () => {
   const [tasks, setTasks] = useState([]);
@@ -177,7 +176,7 @@ const TodoList = () => {
       } else if (diffDays <= 1) {
         return { class: 'text-yellow-400 bg-yellow-900 bg-opacity-30', text: 'DUE SOON', icon: '⏰' };
       } else {
-        return { class: 'text-green-400 bg-green-900 bg-opacity-30', text: 'ON TIME', icon: '✓' };
+        return { class: 'text-green-400 bg-green-900 bg-opacity-30', text: 'ON TIME', icon: '✅' };
       }
     };
 
@@ -316,7 +315,7 @@ const TodoList = () => {
             <div className="h-72 overflow-y-auto">
               {pendingTasks.length === 0 ? (
                 <div className="text-center py-12">
-                  <div className="w-16 h-16 text-gray-600 mx-auto mb-4 text-6xl">✓</div>
+                  <div className="w-16 h-16 text-gray-600 mx-auto mb-4 text-6xl">✅</div>
                   <p className="text-gray-400 font-medium">No pending tasks!</p>
                   <p className="text-gray-500 text-sm">You're all caught up!</p>
                 </div>
