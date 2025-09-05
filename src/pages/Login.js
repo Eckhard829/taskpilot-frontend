@@ -14,9 +14,7 @@ const Login = () => {
     try {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/login`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
 
@@ -30,7 +28,7 @@ const Login = () => {
       }
     } catch (err) {
       console.error('Login error:', err);
-      setError('Unable to connect to the server. Please check your network or try again later.');
+      setError('Unable to connect to the server. Please try again.');
     }
   };
 
