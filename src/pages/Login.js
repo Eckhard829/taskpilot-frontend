@@ -4,52 +4,34 @@ import { useNavigate } from 'react-router-dom';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = async (e, retries = 5, delay = 2000) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setError('');
 
-    for (let i = 0; i < retries; i++) {
-      try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/login`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email, password }),
-          timeout: 10000,
-        });
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-        if (response.ok) {
-          const { token, user } = await response.json();
-          localStorage.setItem('token', token);
-          if (user.role === 'admin') {
-            navigate('/admin');
-          } else if (user.role === 'worker') {
-            navigate('/worker');
-          } else {
-            alert('Invalid role');
-          }
-          break;
-        } else {
-          const error = await response.json();
-          if (i === retries - 1) {
-            alert('Login failed: ' + error.message);
-          }
-        }
-      } catch (error) {
-        if (i === retries - 1) {
-          console.error('Login error:', error);
-          alert('Login failed: Unable to connect to the server. Please check your network or try again later.');
-        }
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('token', data.token);
+        navigate('/worker');
+      } else {
+        const errorData = await response.json();
+        setError(errorData.message || 'Login failed');
       }
-      if (i < retries - 1) {
-        await new Promise(resolve => setTimeout(resolve, delay));
-      }
+    } catch (err) {
+      console.error('Login error:', err);
+      setError('Unable to connect to the server. Please check your network or try again later.');
     }
-    setLoading(false);
   };
 
   return (
@@ -58,37 +40,30 @@ const Login = () => {
         <div className="col-md-6">
           <div className="card">
             <div className="card-body">
-              <h2 className="card-title text-center">TaskPilot Login</h2>
-              <form onSubmit={(e) => handleLogin(e)}>
+              <h2 className="card-title">Login</h2>
+              <form onSubmit={handleLogin}>
                 <div className="mb-3">
-                  <label className="form-label">Email:</label>
-                  <input 
-                    type="email" 
-                    className="form-control" 
-                    value={email} 
-                    onChange={e => setEmail(e.target.value)} 
-                    required 
-                    disabled={loading}
+                  <label className="form-label">Email</label>
+                  <input
+                    type="email"
+                    className="form-control"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
                   />
                 </div>
                 <div className="mb-3">
-                  <label className="form-label">Password:</label>
-                  <input 
-                    type="password" 
-                    className="form-control" 
-                    value={password} 
-                    onChange={e => setPassword(e.target.value)} 
-                    required 
-                    disabled={loading}
+                  <label className="form-label">Password</label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
                   />
                 </div>
-                <button 
-                  type="submit" 
-                  className="btn btn-primary w-100"
-                  disabled={loading}
-                >
-                  {loading ? 'Logging in...' : 'Login'}
-                </button>
+                {error && <div className="alert alert-danger">{error}</div>}
+                <button type="submit" className="btn btn-primary">Login</button>
               </form>
             </div>
           </div>
