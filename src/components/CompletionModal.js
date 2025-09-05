@@ -1,0 +1,218 @@
+import React, { useState } from 'react';
+import Modal from 'react-modal';
+
+Modal.setAppElement('#root');
+
+const CompletionModal = ({ task, onClose, onUpdate }) => {
+  const [explanation, setExplanation] = useState('');
+  const [workLink, setWorkLink] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString() + ' at ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!explanation.trim()) {
+      alert('Please provide a description of the work you completed.');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/work/complete/${task.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          explanation: explanation.trim(),
+          workLink: workLink.trim() || undefined
+        })
+      });
+
+      if (response.ok) {
+        onUpdate();
+        onClose();
+        alert('Work submitted for review successfully!');
+      } else {
+        const error = await response.json();
+        alert('Error submitting work: ' + error.message);
+      }
+    } catch (error) {
+      console.error('Error submitting work:', error);
+      alert('Error submitting work: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const modalStyles = {
+    content: {
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+      width: '600px',
+      maxWidth: '95%',
+      maxHeight: '90%',
+      overflow: 'auto',
+      backgroundColor: '#ffffff',
+      border: 'none',
+      borderRadius: '12px',
+      padding: '0',
+      boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+    },
+    overlay: {
+      backgroundColor: 'rgba(0, 0, 0, 0.6)',
+      backdropFilter: 'blur(4px)'
+    }
+  };
+
+  return (
+    <Modal isOpen={true} onRequestClose={onClose} style={modalStyles}>
+      <div className="bg-white rounded-lg">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <div className="flex items-center">
+            <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
+              <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h2 className="text-xl font-semibold text-gray-800">Submit Completed Work</h2>
+          </div>
+          <button 
+            onClick={onClose}
+            disabled={loading}
+            className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors disabled:opacity-50"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Task Information */}
+        <div className="p-6 bg-blue-50 border-b border-blue-100">
+          <h3 className="font-semibold text-blue-900 mb-2">{task.task}</h3>
+          {task.description && (
+            <p className="text-blue-800 text-sm mb-2">{task.description}</p>
+          )}
+          <div className="text-xs text-blue-700">
+            <span className="font-medium">Deadline:</span> {formatDate(task.deadline)}
+          </div>
+          {task.status === 'rejected' && task.reviewNotes && (
+            <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+              <h4 className="text-red-800 font-medium text-sm mb-1 flex items-center">
+                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+                Previous Feedback:
+              </h4>
+              <p className="text-red-700 text-sm">{task.reviewNotes}</p>
+            </div>
+          )}
+        </div>
+        
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="p-6">
+          <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Describe what you completed <span className="text-red-500">*</span>
+              </label>
+              <textarea 
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                rows="5"
+                value={explanation} 
+                onChange={e => setExplanation(e.target.value)}
+                placeholder="Describe the work you completed, any challenges you faced, and how you addressed them..."
+                required
+                disabled={loading}
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Provide details about what you accomplished and any relevant notes for the reviewer.
+              </p>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Link to your work (optional)
+              </label>
+              <input 
+                type="url" 
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                value={workLink} 
+                onChange={e => setWorkLink(e.target.value)}
+                placeholder="https://example.com/your-work"
+                disabled={loading}
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Optional: Provide a link to your completed work (document, website, etc.)
+              </p>
+            </div>
+            
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="flex items-start">
+                <svg className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div className="text-sm">
+                  <p className="text-blue-800 font-medium mb-1">What happens next?</p>
+                  <p className="text-blue-700">
+                    Your work will be submitted for admin review. You'll receive an email notification once it's been reviewed and approved or if changes are requested.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+
+        {/* Footer */}
+        <div className="flex justify-end space-x-3 px-6 py-4 bg-gray-50 rounded-b-lg border-t border-gray-200">
+          <button 
+            type="button" 
+            onClick={onClose}
+            disabled={loading}
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            onClick={handleSubmit}
+            disabled={loading || !explanation.trim()}
+            className="px-6 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+          >
+            {loading ? (
+              <>
+                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Submitting...
+              </>
+            ) : (
+              <>
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+                Submit for Review
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+    </Modal>
+  );
+};
+
+export default CompletionModal;
