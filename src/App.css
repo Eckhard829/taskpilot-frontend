@@ -1,7 +1,7 @@
-/* Black and Teal Theme */
+/* App.css */
 :root {
-  --primary-black: #000000;
-  --secondary-black: #000000;
+  --primary-black: #333333; /* Changed to dark gray */
+  --secondary-black: #333333; /* Changed to dark gray */
   --accent-teal: #006064;
   --dark-teal: #004346;
   --light-teal: #00888c;
@@ -125,17 +125,6 @@ body {
   color: var(--white);
 }
 
-.btn-outline-secondary {
-  color: var(--gray-medium);
-  border-color: var(--gray-medium);
-}
-
-.btn-outline-secondary:hover {
-  background-color: var(--gray-medium);
-  border-color: var(--gray-medium);
-  color: var(--white);
-}
-
 .list-group-item {
   background-color: var(--secondary-black);
   border: 1px solid var(--accent-teal);
@@ -185,11 +174,6 @@ body {
   border-color: var(--accent-teal) !important;
 }
 
-.bg-light {
-  background-color: rgba(0, 96, 100, 0.1) !important;
-}
-
-/* Navigation tabs styling */
 .nav-tabs {
   border-bottom: 2px solid var(--accent-teal);
 }
@@ -212,7 +196,6 @@ body {
   font-weight: 600;
 }
 
-/* Modal styling */
 .modal-content {
   background-color: var(--secondary-black);
   border: 2px solid var(--accent-teal);
@@ -230,7 +213,6 @@ body {
   filter: invert(1) grayscale(100%) brightness(200%);
 }
 
-/* Sidebar styling */
 .sidebar {
   background-color: var(--secondary-black) !important;
   border-right: 2px solid var(--accent-teal);
@@ -251,12 +233,10 @@ body {
   color: var(--white);
 }
 
-/* Container styling */
 .container-fluid {
   background-color: var(--primary-black);
 }
 
-/* Custom utilities */
 .text-teal {
   color: var(--accent-teal) !important;
 }

@@ -1,3 +1,4 @@
+// App.js
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
@@ -14,19 +15,27 @@ const ProtectedRoute = ({ children, requiredRole }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setUser(null);
+          setLoading(false);
+          return;
+        }
         const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/verify`, {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Authorization': `Bearer ${token}`,
           },
         });
         if (response.ok) {
           const data = await response.json();
           setUser(data.user);
         } else {
+          localStorage.removeItem('token');
           setUser(null);
         }
       } catch (error) {
         console.error('Error verifying user:', error);
+        localStorage.removeItem('token');
         setUser(null);
       } finally {
         setLoading(false);
@@ -36,7 +45,7 @@ const ProtectedRoute = ({ children, requiredRole }) => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div style={{ color: '#ffffff', textAlign: 'center', backgroundColor: '#333333' }}>Loading...</div>;
   }
 
   if (!user) {
