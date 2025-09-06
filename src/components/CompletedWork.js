@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
 const CompletedWork = () => {
-  const [approvedWork, setApprovedWork] = useState([]);
+  const [submittedWork, setSubmittedWork] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchApprovedWork = async () => {
+  const fetchSubmittedWork = async () => {
     try {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/work`, {
         headers: {
@@ -14,22 +14,23 @@ const CompletedWork = () => {
 
       if (response.ok) {
         const data = await response.json();
-        const approvedTasks = data.filter(task => task.status === 'approved');
-        setApprovedWork(approvedTasks);
+        // Show only submitted work (awaiting review) - approved work disappears
+        const submittedTasks = data.filter(task => task.status === 'submitted');
+        setSubmittedWork(submittedTasks);
       } else {
-        console.error('Error fetching approved work');
-        alert('Error fetching approved work');
+        console.error('Error fetching submitted work');
+        alert('Error fetching submitted work');
       }
     } catch (error) {
-      console.error('Error fetching approved work:', error);
-      alert('Error fetching approved work: ' + error.message);
+      console.error('Error fetching submitted work:', error);
+      alert('Error fetching submitted work: ' + error.message);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchApprovedWork();
+    fetchSubmittedWork();
   }, []);
 
   const formatDate = (dateString) => {
@@ -40,12 +41,12 @@ const CompletedWork = () => {
   if (loading) {
     return (
       <div>
-        <h2 className="text-gold mb-4">Completed Work</h2>
+        <h2 className="text-gold mb-4">Submitted Work</h2>
         <div className="text-center">
           <div className="spinner-border text-gold" role="status">
             <span className="visually-hidden">Loading...</span>
           </div>
-          <div className="mt-2">Loading completed work...</div>
+          <div className="mt-2">Loading submitted work...</div>
         </div>
       </div>
     );
@@ -54,47 +55,67 @@ const CompletedWork = () => {
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <h2 className="text-gold">Completed Work</h2>
+        <div>
+          <h2 className="text-gold">Submitted Work</h2>
+          <small className="text-muted">Work you've submitted that's awaiting admin review</small>
+        </div>
         <button 
           className="btn btn-outline-primary btn-sm" 
-          onClick={fetchApprovedWork}
+          onClick={fetchSubmittedWork}
           disabled={loading}
         >
           Refresh
         </button>
       </div>
 
-      {approvedWork.length === 0 ? (
-        <div className="alert alert-warning">
-          <i className="bi bi-exclamation-triangle me-2"></i>
-          No completed and approved work found.
+      {submittedWork.length === 0 ? (
+        <div className="alert alert-info">
+          <i className="bi bi-info-circle me-2"></i>
+          No work submitted for review. Once you complete and submit tasks, they'll appear here until reviewed by an admin.
         </div>
       ) : (
         <div className="list-group">
-          {approvedWork.map(task => (
+          {submittedWork.map(task => (
             <div key={task.id} className="list-group-item bg-light border-gold">
-              <div className="d-flex justify-content-between align-items-center">
-                <div>
-                  <h5 className="mb-2">{task.task}</h5>
-                  <div className="mb-2">
-                    <strong className="text-gold">Description:</strong>
-                    <div className="mt-1 p-2 bg-light rounded border-left-gold">
-                      {task.description}
-                    </div>
+              <div className="d-flex justify-content-between align-items-start">
+                <div className="flex-grow-1">
+                  <div className="d-flex justify-content-between align-items-start mb-2">
+                    <h5 className="mb-0">{task.task}</h5>
+                    <span className="badge bg-warning text-dark">
+                      <i className="bi bi-clock me-1"></i>
+                      Awaiting Review
+                    </span>
                   </div>
                   
-                  {task.instructions && (
+                  {task.description && (
                     <div className="mb-2">
-                      <strong className="text-gold">Instructions:</strong>
+                      <strong className="text-gold">Description:</strong>
                       <div className="mt-1 p-2 bg-light rounded border-left-gold">
-                        {task.instructions}
+                        {task.description}
                       </div>
                     </div>
                   )}
                   
+                  <div className="mb-2">
+                    <strong className="text-gold">Instructions:</strong>
+                    <div className="mt-1 p-2 bg-light rounded border-left-gold">
+                      {task.instructions}
+                    </div>
+                  </div>
+                  
+                  <div className="mb-2">
+                    <strong className="text-gold">Original Deadline:</strong>
+                    <span className="ms-2">{formatDate(task.deadline)}</span>
+                  </div>
+                  
+                  <div className="mb-2 text-success">
+                    <strong>Submitted:</strong>
+                    <span className="ms-2">{formatDate(task.submittedAt)}</span>
+                  </div>
+                  
                   {task.explanation && (
                     <div className="mb-2">
-                      <strong className="text-gold">Worker's Notes:</strong>
+                      <strong className="text-gold">Your Work Notes:</strong>
                       <div className="mt-1 p-2 bg-light rounded border-left-gold">
                         {task.explanation}
                       </div>
@@ -118,29 +139,10 @@ const CompletedWork = () => {
                     </div>
                   )}
                   
-                  {task.reviewNotes && (
-                    <div className="mb-2">
-                      <strong className="text-gold">Review Notes:</strong>
-                      <div className="mt-1 p-2 bg-light rounded border-left-gold">
-                        {task.reviewNotes}
-                      </div>
-                    </div>
-                  )}
-                  
                   <div className="text-muted">
                     <small>
-                      <i className="bi bi-person me-1"></i>
-                      Worker: {task.worker?.name} ({task.worker?.email})
-                    </small>
-                    <br />
-                    <small>
-                      <i className="bi bi-calendar-check me-1"></i>
-                      Approved: {formatDate(task.reviewedAt)}
-                    </small>
-                    <br />
-                    <small>
                       <i className="bi bi-person-gear me-1"></i>
-                      Reviewed by: {task.reviewedByUser?.name} ({task.reviewedByUser?.email})
+                      Assigned by: {task.assignedByUser?.name} ({task.assignedByUser?.email})
                     </small>
                   </div>
                 </div>
@@ -149,6 +151,16 @@ const CompletedWork = () => {
           ))}
         </div>
       )}
+      
+      <div className="mt-4">
+        <div className="alert alert-info">
+          <i className="bi bi-info-circle me-2"></i>
+          <strong>What happens next?</strong><br />
+          Your submitted work is in the admin review queue. You'll receive an email notification once it's been reviewed. 
+          If approved, the task will be marked as complete and disappear from this list. 
+          If rejected, it will be returned to your "Work To Do" section with feedback.
+        </div>
+      </div>
     </div>
   );
 };
