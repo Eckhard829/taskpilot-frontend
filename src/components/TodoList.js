@@ -1,4 +1,4 @@
-// TodoList.js
+// TodoList.js - Fixed version
 import React, { useState, useEffect } from 'react';
 import CompletionModal from './CompletionModal';
 import TaskDetailModal from './TaskDetailModal';
@@ -82,7 +82,9 @@ const TodoList = () => {
   };
 
   const pendingTasks = tasks.filter(task => task.status === 'pending' || task.status === 'rejected');
-  const completedTasks = tasks.filter(task => task.status === 'submitted' || task.status === 'approved');
+  
+  // FIXED: Workers only see 'submitted' tasks (awaiting review), not 'approved' tasks
+  const completedTasks = tasks.filter(task => task.status === 'submitted');
 
   if (loading) {
     return (
@@ -221,7 +223,7 @@ const TodoList = () => {
           </div>
         </div>
 
-        {/* Right Block - Completed Work */}
+        {/* Right Block - Submitted Work (Awaiting Review) */}
         <div style={{
           backgroundColor: '#1f2937',
           borderRadius: '12px',
@@ -233,7 +235,7 @@ const TodoList = () => {
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
             <h2 style={{ fontSize: '20px', fontWeight: '600', color: 'white', margin: 0 }}>
-              ✅ Completed Work
+              ⏳ Awaiting Review
             </h2>
             <span style={{ 
               fontSize: '14px', 
@@ -249,8 +251,8 @@ const TodoList = () => {
             {completedTasks.length === 0 ? (
               <div style={{ textAlign: 'center', paddingTop: '100px' }}>
                 <div style={{ fontSize: '48px', marginBottom: '16px' }}>📋</div>
-                <p style={{ color: '#9ca3af', fontWeight: '500', margin: '8px 0' }}>No completed work yet</p>
-                <p style={{ color: '#6b7280', fontSize: '14px', margin: 0 }}>Finished tasks will appear here</p>
+                <p style={{ color: '#9ca3af', fontWeight: '500', margin: '8px 0' }}>No work awaiting review</p>
+                <p style={{ color: '#6b7280', fontSize: '14px', margin: 0 }}>Submitted tasks will appear here until reviewed</p>
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -272,20 +274,29 @@ const TodoList = () => {
                     }}
                     onClick={() => handleViewDetails(task)}
                   >
-                    <h3 
-                      style={{ 
-                        fontSize: '18px', 
-                        fontWeight: '500', 
-                        color: 'white', 
+                    <div style={{ textAlign: 'center', width: '100%' }}>
+                      <h3 
+                        style={{ 
+                          fontSize: '18px', 
+                          fontWeight: '500', 
+                          color: 'white', 
+                          margin: '0 0 8px 0',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap'
+                        }}
+                      >
+                        {task.task}
+                      </h3>
+                      <p style={{
+                        fontSize: '14px',
+                        color: '#fbbf24',
                         margin: 0,
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                        textAlign: 'center'
-                      }}
-                    >
-                      {task.task}
-                    </h3>
+                        fontWeight: '500'
+                      }}>
+                        Under Admin Review
+                      </p>
+                    </div>
                   </div>
                 ))}
               </div>
