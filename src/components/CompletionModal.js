@@ -24,29 +24,92 @@ const CompletionModal = ({ task, onClose, onUpdate }) => {
     setLoading(true);
 
     try {
+      console.log('=== TASK COMPLETION DEBUG ===');
+      console.log('Task ID:', task.id);
+      console.log('Explanation:', explanation.trim());
+      console.log('Work Link:', workLink.trim() || null);
+      console.log('API URL:', process.env.REACT_APP_API_URL);
+      
+      const token = localStorage.getItem('token');
+      console.log('Token exists:', !!token);
+      
+      const requestBody = {
+        explanation: explanation.trim(),
+        workLink: workLink.trim() || null
+      };
+      
+      console.log('Request body:', JSON.stringify(requestBody, null, 2));
+
       const response = await fetch(`${process.env.REACT_APP_API_URL}/work/complete/${task.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({
-          explanation: explanation.trim(),
-          workLink: workLink.trim() || undefined
-        })
+        body: JSON.stringify(requestBody)
       });
 
+      console.log('Response status:', response.status);
+      console.log('Response headers:', [...response.headers.entries()]);
+
+      // Try to get response body regardless of status
+      let responseData;
+      const contentType = response.headers.get('content-type');
+      
+      if (contentType && contentType.includes('application/json')) {
+        responseData = await response.json();
+      } else {
+        responseData = { message: await response.text() };
+      }
+      
+      console.log('Response data:', responseData);
+
       if (response.ok) {
+        console.log('Task completion successful');
         onUpdate();
         onClose();
         alert('Work submitted for review successfully!');
       } else {
-        const error = await response.json();
-        alert('Error submitting work: ' + error.message);
+        console.error('Task completion failed:', responseData);
+        
+        // More specific error handling
+        let errorMessage = 'Unknown error occurred';
+        
+        if (response.status === 401) {
+          errorMessage = 'Authentication failed. Please log in again.';
+          localStorage.removeItem('token');
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 2000);
+        } else if (response.status === 403) {
+          errorMessage = 'Access denied. You may not have permission to complete this task.';
+        } else if (response.status === 404) {
+          errorMessage = 'Task not found. It may have been deleted.';
+        } else if (response.status === 400) {
+          errorMessage = responseData.message || 'Invalid request. Please check your input.';
+        } else if (response.status === 500) {
+          errorMessage = 'Server error. Please try again later or contact support.';
+        } else {
+          errorMessage = responseData.message || `HTTP ${response.status}: ${response.statusText}`;
+        }
+        
+        alert('Error submitting work: ' + errorMessage);
       }
     } catch (error) {
-      console.error('Error submitting work:', error);
-      alert('Error submitting work: ' + error.message);
+      console.error('Network/Request error:', error);
+      
+      let errorMessage = 'Network error occurred';
+      
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        errorMessage = 'Cannot connect to server. Please check your internet connection.';
+      } else if (error.name === 'AbortError') {
+        errorMessage = 'Request was cancelled. Please try again.';
+      } else {
+        errorMessage = `Network error: ${error.message}`;
+      }
+      
+      alert('Error submitting work: ' + errorMessage);
     } finally {
       setLoading(false);
     }
