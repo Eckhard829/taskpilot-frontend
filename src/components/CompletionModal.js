@@ -1,3 +1,4 @@
+// components/CompletionModal.js - Complete file
 import React, { useState } from 'react';
 import Modal from 'react-modal';
 
@@ -26,12 +27,16 @@ const CompletionModal = ({ task, onClose, onUpdate }) => {
     try {
       console.log('=== TASK COMPLETION DEBUG ===');
       console.log('Task ID:', task.id);
-      console.log('Explanation:', explanation.trim());
-      console.log('Work Link:', workLink.trim() || null);
       console.log('API URL:', process.env.REACT_APP_API_URL);
       
       const token = localStorage.getItem('token');
       console.log('Token exists:', !!token);
+      
+      if (!token) {
+        alert('Authentication token missing. Please log in again.');
+        window.location.href = '/';
+        return;
+      }
       
       const requestBody = {
         explanation: explanation.trim(),
@@ -53,14 +58,12 @@ const CompletionModal = ({ task, onClose, onUpdate }) => {
       console.log('Response status:', response.status);
       console.log('Response headers:', [...response.headers.entries()]);
 
-      // Try to get response body regardless of status
       let responseData;
-      const contentType = response.headers.get('content-type');
-      
-      if (contentType && contentType.includes('application/json')) {
+      try {
         responseData = await response.json();
-      } else {
-        responseData = { message: await response.text() };
+      } catch (parseError) {
+        console.error('Failed to parse response as JSON:', parseError);
+        responseData = { message: 'Server returned invalid response' };
       }
       
       console.log('Response data:', responseData);
@@ -73,25 +76,32 @@ const CompletionModal = ({ task, onClose, onUpdate }) => {
       } else {
         console.error('Task completion failed:', responseData);
         
-        // More specific error handling
         let errorMessage = 'Unknown error occurred';
         
-        if (response.status === 401) {
-          errorMessage = 'Authentication failed. Please log in again.';
-          localStorage.removeItem('token');
-          setTimeout(() => {
-            window.location.href = '/';
-          }, 2000);
-        } else if (response.status === 403) {
-          errorMessage = 'Access denied. You may not have permission to complete this task.';
-        } else if (response.status === 404) {
-          errorMessage = 'Task not found. It may have been deleted.';
-        } else if (response.status === 400) {
-          errorMessage = responseData.message || 'Invalid request. Please check your input.';
-        } else if (response.status === 500) {
-          errorMessage = 'Server error. Please try again later or contact support.';
-        } else {
-          errorMessage = responseData.message || `HTTP ${response.status}: ${response.statusText}`;
+        switch (response.status) {
+          case 400:
+            errorMessage = responseData.message || 'Invalid request. Please check your input.';
+            break;
+          case 401:
+            errorMessage = 'Authentication failed. Please log in again.';
+            localStorage.removeItem('token');
+            setTimeout(() => window.location.href = '/', 2000);
+            break;
+          case 403:
+            errorMessage = 'Access denied. You may not have permission to complete this task.';
+            break;
+          case 404:
+            errorMessage = 'Task not found. It may have been deleted.';
+            break;
+          case 409:
+            errorMessage = 'Task is already being processed. Please refresh and try again.';
+            break;
+          case 500:
+            errorMessage = `Server error: ${responseData.message || responseData.error || 'Internal server error'}`;
+            console.error('Full server error response:', responseData);
+            break;
+          default:
+            errorMessage = responseData.message || `HTTP ${response.status}: ${response.statusText}`;
         }
         
         alert('Error submitting work: ' + errorMessage);
@@ -142,7 +152,6 @@ const CompletionModal = ({ task, onClose, onUpdate }) => {
   return (
     <Modal isOpen={true} onRequestClose={onClose} style={modalStyles}>
       <div className="bg-gray-800 rounded-lg text-white">
-        {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-600">
           <div className="flex items-center">
             <div className="w-10 h-10 bg-green-700 rounded-full flex items-center justify-center mr-3">
@@ -163,7 +172,6 @@ const CompletionModal = ({ task, onClose, onUpdate }) => {
           </button>
         </div>
 
-        {/* Task Information */}
         <div className="p-6 bg-gray-700 border-b border-gray-600">
           <h3 className="font-semibold text-blue-200 mb-2">{task.task}</h3>
           {task.description && (
@@ -185,7 +193,6 @@ const CompletionModal = ({ task, onClose, onUpdate }) => {
           )}
         </div>
         
-        {/* Form */}
         <form onSubmit={handleSubmit} className="p-6">
           <div className="space-y-6">
             <div>
@@ -239,7 +246,6 @@ const CompletionModal = ({ task, onClose, onUpdate }) => {
           </div>
         </form>
 
-        {/* Footer */}
         <div className="flex justify-end space-x-3 px-6 py-4 bg-gray-700 rounded-b-lg border-t border-gray-600">
           <button 
             type="button" 
