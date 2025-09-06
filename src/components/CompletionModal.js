@@ -1,4 +1,4 @@
-// components/CompletionModal.js - Complete file
+// components/CompletionModal.js - Updated to ensure proper task flow
 import React, { useState } from 'react';
 import Modal from 'react-modal';
 
