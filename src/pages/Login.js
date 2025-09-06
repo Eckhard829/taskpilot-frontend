@@ -124,12 +124,33 @@ const Login = () => {
                     )}
                   </button>
                 </form>
+
+                <div className="text-center">
+                  <hr className="my-4" />
+                  <p className="text-muted mb-3">Demo Accounts</p>
+                  <div className="d-grid gap-2">
+                    <button
+                      type="button"
+                      className="btn btn-outline-primary btn-sm"
+                      onClick={() => handleDemoLogin('admin')}
+                      disabled={loading}
+                    >
+                      <i className="bi bi-person-gear me-1"></i>
+                      Demo Admin Login
+                    </button>
+                  </div>
+                  <div className="mt-3">
+                    <small className="text-muted">
+                      <strong>Admin:</strong> admin@taskpilot.com / admin123
+                    </small>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
   );
 };
 
