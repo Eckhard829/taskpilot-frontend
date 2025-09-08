@@ -1,10 +1,10 @@
 /* App.css */
 :root {
-  --primary-black: #000000; /* Changed to pure black */
-  --secondary-black: #000000; /* Changed to pure black */
-  --accent-teal: #006064;
-  --dark-teal: #004346;
-  --light-teal: #00888c;
+  --primary-black: #000000; /* Pure black */
+  --secondary-black: #000000; /* Pure black */
+  --accent-teal: #00A3AD; /* Updated to your specified color */
+  --dark-teal: #008A94; /* Darker shade of your color */
+  --light-teal: #00BCC7; /* Lighter shade of your color */
   --white: #ffffff;
   --gray-light: #f8f9fa;
   --gray-medium: #6c757d;
@@ -55,7 +55,7 @@ body {
 .form-control:focus {
   background-color: var(--primary-black);
   border-color: var(--light-teal);
-  box-shadow: 0 0 0 0.2rem rgba(0, 96, 100, 0.25);
+  box-shadow: 0 0 0 0.2rem rgba(0, 163, 173, 0.25);
   color: var(--white);
 }
 
@@ -143,7 +143,7 @@ body {
 }
 
 .alert-info {
-  background-color: rgba(0, 96, 100, 0.1);
+  background-color: rgba(0, 163, 173, 0.1);
   border-color: var(--accent-teal);
   color: var(--accent-teal);
 }
