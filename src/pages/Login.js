@@ -105,7 +105,10 @@ const Login = () => {
                   </div>
 
                   <div className="mb-4">
-                    <label htmlFor="password" className="form-label" style={{ color: '#006064' }}>Password</label>
+                    <label htmlFor="password" className="form-label" style={{ 
+                      color: '#006064',
+                      textShadow: '0 0 8px rgba(0, 96, 100, 0.6)'
+                    }}>Password</label>
                     <input
                       type="password"
                       className="form-control"
