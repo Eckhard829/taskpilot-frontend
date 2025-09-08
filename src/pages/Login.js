@@ -57,20 +57,20 @@ const Login = () => {
           <div className="col-md-6 col-lg-4">
             <div className="card shadow-lg" style={{ 
               backgroundColor: '#000000',
-              border: '2px solid #006064',
-              boxShadow: '0 0 20px rgba(0, 96, 100, 0.4)'
+              border: '2px solid #00A3AD',
+              boxShadow: '0 0 20px rgba(0, 163, 173, 0.4)'
             }}>
               <div className="card-body p-5" style={{ backgroundColor: '#000000' }}>
                 <div className="text-center mb-4">
                   <div className="d-flex justify-content-center align-items-center mb-3">
                     <i className="bi bi-kanban me-2" style={{
                       fontSize: '2.5rem',
-                      color: '#006064',
-                      textShadow: '0 0 10px rgba(0, 96, 100, 0.6)'
+                      color: '#00A3AD',
+                      textShadow: '0 0 10px rgba(0, 163, 173, 0.6)'
                     }}></i>
                     <h1 className="h2 mb-0" style={{
-                      color: '#006064',
-                      textShadow: '0 0 10px rgba(0, 96, 100, 0.6)'
+                      color: '#00A3AD',
+                      textShadow: '0 0 10px rgba(0, 163, 173, 0.6)'
                     }}>TaskPilot</h1>
                   </div>
                   <p style={{ color: '#ffffff' }}>Task Management System</p>
@@ -85,7 +85,7 @@ const Login = () => {
 
                 <form onSubmit={handleSubmit}>
                   <div className="mb-3">
-                    <label htmlFor="email" className="form-label" style={{ color: '#006064' }}>Email</label>
+                    <label htmlFor="email" className="form-label" style={{ color: '#00A3AD' }}>Email</label>
                     <input
                       type="email"
                       className="form-control"
@@ -97,17 +97,17 @@ const Login = () => {
                       placeholder="Enter your email"
                       style={{
                         backgroundColor: '#ffffff',
-                        border: '2px solid #006064',
+                        border: '2px solid #00A3AD',
                         color: '#000000',
-                        boxShadow: '0 0 5px rgba(0, 96, 100, 0.3)'
+                        boxShadow: '0 0 5px rgba(0, 163, 173, 0.3)'
                       }}
                     />
                   </div>
 
                   <div className="mb-4">
                     <label htmlFor="password" className="form-label" style={{ 
-                      color: '#006064',
-                      textShadow: '0 0 8px rgba(0, 96, 100, 0.6)'
+                      color: '#00A3AD',
+                      textShadow: '0 0 8px rgba(0, 163, 173, 0.6)'
                     }}>Password</label>
                     <input
                       type="password"
@@ -120,9 +120,9 @@ const Login = () => {
                       placeholder="Enter your password"
                       style={{
                         backgroundColor: '#ffffff',
-                        border: '2px solid #006064',
+                        border: '2px solid #00A3AD',
                         color: '#000000',
-                        boxShadow: '0 0 5px rgba(0, 96, 100, 0.3)'
+                        boxShadow: '0 0 5px rgba(0, 163, 173, 0.3)'
                       }}
                     />
                   </div>
@@ -132,11 +132,11 @@ const Login = () => {
                     className="btn w-100 mb-3"
                     disabled={loading}
                     style={{
-                      backgroundColor: '#006064',
-                      border: '2px solid #006064',
+                      backgroundColor: '#00A3AD',
+                      border: '2px solid #00A3AD',
                       color: '#ffffff',
                       fontWeight: '600',
-                      boxShadow: '0 0 10px rgba(0, 96, 100, 0.4)'
+                      boxShadow: '0 0 10px rgba(0, 163, 173, 0.4)'
                     }}
                   >
                     {loading ? (
