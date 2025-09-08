@@ -168,7 +168,7 @@ const TodoList = () => {
                       justifyContent: 'center',
                       cursor: 'pointer',
                       transition: 'all 0.2s',
-                      border: '1px solid #000000ff',
+                      border: '1px solid #ffffffff',
                       position: 'relative'
                     }}
                     onMouseEnter={() => setHoveredTask(task.id)}
