@@ -98,41 +98,43 @@ const WorkerDashboard = () => {
     }
   };
 
-  const handleConnectGoogleCalendar = () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      alert('Please log in again to connect Google Calendar');
-      navigate('/');
-      return;
-    }
-    
-    window.location.href = `${process.env.REACT_APP_API_URL}/auth/google`;
-  };
-
-  const handleDismissGooglePrompt = () => {
-    setShowGooglePrompt(false);
-    localStorage.setItem('googleCalendarPromptDismissed', 'true');
-  };
-
-  const handleDisconnectGoogleCalendar = async () => {
+  const handleConnectGoogleCalendar = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/google/disconnect`, {
-        method: 'POST',
+      if (!token) {
+        alert('Please log in again to connect Google Calendar');
+        navigate('/');
+        return;
+      }
+      
+      // Make a fetch request with the Authorization header
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/google`, {
+        method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
-        },
+          'Content-Type': 'application/json'
+        }
       });
-      
+
       if (response.ok) {
-        setGoogleCalendarStatus(false);
-        alert('Google Calendar disconnected successfully');
+        // If the response is a redirect, get the URL from the response
+        const redirectUrl = response.url;
+        window.location.href = redirectUrl;
+      } else if (response.redirected) {
+        // Handle redirect manually
+        window.location.href = response.url;
       } else {
-        alert('Failed to disconnect Google Calendar');
+        // If response contains JSON with redirect URL
+        const data = await response.json().catch(() => null);
+        if (data && data.redirectUrl) {
+          window.location.href = data.redirectUrl;
+        } else {
+          alert('Failed to connect to Google Calendar. Please try again.');
+        }
       }
     } catch (error) {
-      console.error('Error disconnecting Google Calendar:', error);
-      alert('Failed to disconnect Google Calendar');
+      console.error('Error connecting to Google Calendar:', error);
+      alert('Failed to connect to Google Calendar. Please try again.');
     }
   };
 
