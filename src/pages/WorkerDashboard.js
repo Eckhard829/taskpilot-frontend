@@ -98,44 +98,19 @@ const WorkerDashboard = () => {
     }
   };
 
-  const handleConnectGoogleCalendar = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        alert('Please log in again to connect Google Calendar');
-        navigate('/');
-        return;
-      }
-      
-      // Make a fetch request with the Authorization header
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/google`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (response.ok) {
-        // If the response is a redirect, get the URL from the response
-        const redirectUrl = response.url;
-        window.location.href = redirectUrl;
-      } else if (response.redirected) {
-        // Handle redirect manually
-        window.location.href = response.url;
-      } else {
-        // If response contains JSON with redirect URL
-        const data = await response.json().catch(() => null);
-        if (data && data.redirectUrl) {
-          window.location.href = data.redirectUrl;
-        } else {
-          alert('Failed to connect to Google Calendar. Please try again.');
-        }
-      }
-    } catch (error) {
-      console.error('Error connecting to Google Calendar:', error);
-      alert('Failed to connect to Google Calendar. Please try again.');
+  const handleConnectGoogleCalendar = () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('Please log in again to connect Google Calendar');
+      navigate('/');
+      return;
     }
+    
+    // Create the URL with the token as a query parameter
+    const googleAuthUrl = `${process.env.REACT_APP_API_URL}/auth/google?token=${encodeURIComponent(token)}`;
+    
+    // Direct navigation to the OAuth endpoint
+    window.location.href = googleAuthUrl;
   };
 
   const handleDisconnectGoogleCalendar = async () => {
