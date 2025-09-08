@@ -50,27 +50,30 @@ const Login = () => {
     }
   };
 
-  const handleDemoLogin = async (role) => {
-    if (role === 'admin') {
-      setEmail('admin@taskpilot.com');
-      setPassword('admin123');
-    }
-    // Note: For worker demo, you'd need to create a demo worker account first
-  };
-
   return (
-    <div className="min-vh-100 d-flex align-items-center justify-content-center" style={{ backgroundColor: '#333333' }}>
+    <div className="min-vh-100 d-flex align-items-center justify-content-center" style={{ backgroundColor: '#000000' }}>
       <div className="container">
         <div className="row justify-content-center">
           <div className="col-md-6 col-lg-4">
-            <div className="card shadow-lg">
-              <div className="card-body p-5">
+            <div className="card shadow-lg" style={{ 
+              backgroundColor: '#000000',
+              border: '2px solid #006064',
+              boxShadow: '0 0 20px rgba(0, 96, 100, 0.4)'
+            }}>
+              <div className="card-body p-5" style={{ backgroundColor: '#000000' }}>
                 <div className="text-center mb-4">
                   <div className="d-flex justify-content-center align-items-center mb-3">
-                    <i className="bi bi-kanban text-teal me-2" style={{fontSize: '2.5rem'}}></i>
-                    <h1 className="h2 text-teal mb-0">TaskPilot</h1>
+                    <i className="bi bi-kanban me-2" style={{
+                      fontSize: '2.5rem',
+                      color: '#006064',
+                      textShadow: '0 0 10px rgba(0, 96, 100, 0.6)'
+                    }}></i>
+                    <h1 className="h2 mb-0" style={{
+                      color: '#006064',
+                      textShadow: '0 0 10px rgba(0, 96, 100, 0.6)'
+                    }}>TaskPilot</h1>
                   </div>
-                  <p className="text-muted">Task Management System</p>
+                  <p style={{ color: '#ffffff' }}>Task Management System</p>
                 </div>
 
                 {error && (
@@ -82,7 +85,7 @@ const Login = () => {
 
                 <form onSubmit={handleSubmit}>
                   <div className="mb-3">
-                    <label htmlFor="email" className="form-label">Email</label>
+                    <label htmlFor="email" className="form-label" style={{ color: '#006064' }}>Email</label>
                     <input
                       type="email"
                       className="form-control"
@@ -92,11 +95,17 @@ const Login = () => {
                       required
                       disabled={loading}
                       placeholder="Enter your email"
+                      style={{
+                        backgroundColor: '#ffffff',
+                        border: '2px solid #006064',
+                        color: '#000000',
+                        boxShadow: '0 0 5px rgba(0, 96, 100, 0.3)'
+                      }}
                     />
                   </div>
 
                   <div className="mb-4">
-                    <label htmlFor="password" className="form-label">Password</label>
+                    <label htmlFor="password" className="form-label" style={{ color: '#006064' }}>Password</label>
                     <input
                       type="password"
                       className="form-control"
@@ -106,13 +115,26 @@ const Login = () => {
                       required
                       disabled={loading}
                       placeholder="Enter your password"
+                      style={{
+                        backgroundColor: '#ffffff',
+                        border: '2px solid #006064',
+                        color: '#000000',
+                        boxShadow: '0 0 5px rgba(0, 96, 100, 0.3)'
+                      }}
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className="btn btn-primary w-100 mb-3"
+                    className="btn w-100 mb-3"
                     disabled={loading}
+                    style={{
+                      backgroundColor: '#006064',
+                      border: '2px solid #006064',
+                      color: '#ffffff',
+                      fontWeight: '600',
+                      boxShadow: '0 0 10px rgba(0, 96, 100, 0.4)'
+                    }}
                   >
                     {loading ? (
                       <>
@@ -124,27 +146,6 @@ const Login = () => {
                     )}
                   </button>
                 </form>
-
-                <div className="text-center">
-                  <hr className="my-4" />
-                  <p className="text-muted mb-3">Demo Accounts</p>
-                  <div className="d-grid gap-2">
-                    <button
-                      type="button"
-                      className="btn btn-outline-primary btn-sm"
-                      onClick={() => handleDemoLogin('admin')}
-                      disabled={loading}
-                    >
-                      <i className="bi bi-person-gear me-1"></i>
-                      Demo Admin Login
-                    </button>
-                  </div>
-                  <div className="mt-3">
-                    <small className="text-muted">
-                      <strong>Admin:</strong> admin@taskpilot.com / admin123
-                    </small>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
