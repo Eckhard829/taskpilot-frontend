@@ -148,7 +148,7 @@ const WorkerDashboard = () => {
 
   if (authError) {
     return (
-      <div style={{ color: '#ffffff', textAlign: 'center', backgroundColor: '#333333', padding: '20px' }}>
+      <div style={{ color: '#ffffff', textAlign: 'center', backgroundColor: '#000000ff', padding: '20px' }}>
         <h3>Authentication Error</h3>
         <p>{authError}</p>
         <button onClick={() => navigate('/')} className="btn btn-primary">
