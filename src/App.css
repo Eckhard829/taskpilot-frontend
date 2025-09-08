@@ -1,7 +1,7 @@
 /* App.css */
 :root {
-  --primary-black: #333333; /* Changed to dark gray */
-  --secondary-black: #333333; /* Changed to dark gray */
+  --primary-black: #000000; /* Changed to pure black */
+  --secondary-black: #000000; /* Changed to pure black */
   --accent-teal: #006064;
   --dark-teal: #004346;
   --light-teal: #00888c;
