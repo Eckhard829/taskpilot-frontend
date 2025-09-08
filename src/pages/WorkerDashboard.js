@@ -138,6 +138,34 @@ const WorkerDashboard = () => {
     }
   };
 
+  const handleDisconnectGoogleCalendar = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/google/disconnect`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+      });
+
+      if (response.ok) {
+        setGoogleCalendarStatus(false);
+        alert('Google Calendar disconnected successfully!');
+      } else {
+        alert('Failed to disconnect Google Calendar. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error disconnecting Google Calendar:', error);
+      alert('Failed to disconnect Google Calendar. Please try again.');
+    }
+  };
+
+  const handleDismissGooglePrompt = () => {
+    setShowGooglePrompt(false);
+    localStorage.setItem('googleCalendarPromptDismissed', 'true');
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('googleCalendarPromptDismissed');
