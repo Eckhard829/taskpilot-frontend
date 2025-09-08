@@ -37,29 +37,40 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="d-flex">
+    <div className="d-flex" style={{ backgroundColor: '#000000', minHeight: '100vh' }}>
       <Sidebar />
       <div className="flex-grow-1">
-        <nav className="navbar navbar-light bg-light border-bottom" style={{ backgroundColor: '#000000' }}>
+        <nav className="navbar navbar-dark" style={{ 
+          backgroundColor: '#000000', 
+          borderBottom: '2px solid #00A3AD' 
+        }}>
           <div className="container-fluid">
             <div>
-              <span className="navbar-brand mb-0 h1 text-teal">Admin Dashboard</span>
+              <span className="navbar-brand mb-0 h1" style={{ color: '#00A3AD' }}>
+                Admin Dashboard
+              </span>
               {user && (
-                <small className="text-muted d-block">
+                <small className="d-block" style={{ color: '#ffffff' }}>
                   Welcome, {user.name} ({user.email})
                 </small>
               )}
             </div>
             <button 
-              className="btn btn-outline-danger" 
+              className="btn"
               onClick={handleLogout}
+              style={{
+                backgroundColor: '#ffffff',
+                color: '#000000',
+                border: '1px solid #ffffff',
+                fontWeight: '500'
+              }}
             >
               Logout
             </button>
           </div>
         </nav>
         
-        <div className="p-3">
+        <div className="p-3" style={{ backgroundColor: '#000000', minHeight: 'calc(100vh - 80px)' }}>
           <Routes>
             <Route path="/" element={<WorkerList />} />
             <Route path="/review" element={<ReviewQueue />} />

@@ -34,35 +34,49 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="sidebar bg-light border-end" style={{ width: '280px', minHeight: '100vh' }}>
+    <div 
+      className="sidebar border-end" 
+      style={{ 
+        width: '280px', 
+        minHeight: '100vh', 
+        backgroundColor: '#000000',
+        borderRight: '2px solid #00A3AD' 
+      }}
+    >
       <div className="p-3">
         <div className="d-flex align-items-center mb-4">
-          <i className="bi bi-kanban text-teal me-2" style={{fontSize: '1.5rem'}}></i>
-          <h4 className="mb-0 text-teal">TaskPilot</h4>
+          <i 
+            className="bi bi-kanban me-2" 
+            style={{
+              fontSize: '1.5rem',
+              color: '#00A3AD'
+            }}
+          ></i>
+          <h4 className="mb-0" style={{ color: '#00A3AD' }}>TaskPilot</h4>
         </div>
         
         <nav className="nav flex-column">
           {menuItems.map((item) => (
             <button
               key={item.path}
-              className={`nav-link text-start p-3 mb-2 border-0 rounded ${
-                isActive(item.path) 
-                  ? 'active bg-teal text-white' 
-                  : 'text-white bg-transparent hover-bg-teal'
-              }`}
+              className={`nav-link text-start p-3 mb-2 border-0 rounded`}
               onClick={() => navigate(item.path)}
               style={{
                 transition: 'all 0.2s',
-                backgroundColor: isActive(item.path) ? '#006064' : 'transparent'
+                backgroundColor: isActive(item.path) ? '#00A3AD' : 'transparent',
+                color: '#ffffff',
+                border: `1px solid ${isActive(item.path) ? '#00A3AD' : '#00A3AD'}`
               }}
               onMouseEnter={(e) => {
                 if (!isActive(item.path)) {
-                  e.target.style.backgroundColor = '#00888c';
+                  e.target.style.backgroundColor = '#00A3AD';
+                  e.target.style.opacity = '0.8';
                 }
               }}
               onMouseLeave={(e) => {
                 if (!isActive(item.path)) {
                   e.target.style.backgroundColor = 'transparent';
+                  e.target.style.opacity = '1';
                 }
               }}
             >
@@ -79,8 +93,8 @@ const Sidebar = () => {
       </div>
       
       <div className="mt-auto p-3">
-        <div className="border-top border-teal pt-3">
-          <small className="text-muted d-block text-center">
+        <div className="pt-3" style={{ borderTop: '1px solid #00A3AD' }}>
+          <small className="d-block text-center" style={{ color: '#ffffff' }}>
             <i className="bi bi-shield-check me-1"></i>
             Admin Panel
           </small>
