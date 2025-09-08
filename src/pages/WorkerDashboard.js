@@ -143,7 +143,7 @@ const WorkerDashboard = () => {
   };
 
   if (!user && !authError) {
-    return <div style={{ color: '#ffffff', textAlign: 'center', backgroundColor: '#333333' }}>Loading...</div>;
+    return <div style={{ color: '#ffffff', textAlign: 'center', backgroundColor: '#000000ff' }}>Loading...</div>;
   }
 
   if (authError) {
@@ -159,7 +159,7 @@ const WorkerDashboard = () => {
   }
 
   return (
-    <div className="container-fluid" style={{ backgroundColor: '#333333' }}>
+    <div className="container-fluid" style={{ backgroundColor: '#000000ff' }}>
       <nav className="navbar navbar-light bg-light border-bottom mb-4">
         <div className="container-fluid">
           <div>
