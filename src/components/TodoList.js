@@ -1,4 +1,4 @@
-// TodoList.js
+// TodoList.js - Fixed version with black backgrounds
 import React, { useState, useEffect } from 'react';
 import CompletionModal from './CompletionModal';
 import TaskDetailModal from './TaskDetailModal';
@@ -13,7 +13,6 @@ const TodoList = () => {
 
   const fetchTasks = async () => {
     setError(null);
-    setLoading(true);
     
     try {
       const token = localStorage.getItem('token');
@@ -38,6 +37,7 @@ const TodoList = () => {
         setError(null);
       } else {
         const errorData = await response.json().catch(() => ({}));
+        
         if (response.status === 401) {
           setError('Authentication expired. Please login again.');
           localStorage.removeItem('token');
@@ -55,10 +55,6 @@ const TodoList = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const refreshTasks = () => {
-    fetchTasks();
   };
 
   useEffect(() => {
@@ -81,62 +77,84 @@ const TodoList = () => {
     setDetailTask(null);
   };
 
-  const pendingTasks = tasks.filter(task => ['pending', 'rejected'].includes(task.status));
+  const refreshTasks = () => {
+    fetchTasks();
+  };
+
+  const pendingTasks = tasks.filter(task => task.status === 'pending' || task.status === 'rejected');
+  
+  // FIXED: Workers only see 'submitted' tasks (awaiting review), not 'approved' tasks
   const completedTasks = tasks.filter(task => task.status === 'submitted');
 
   if (loading) {
     return (
-      <div>
-        <h2 className="text-gold mb-4">Work To Do</h2>
-        <div className="text-center">
-          <div className="spinner-border text-gold" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-          <div className="mt-2">Loading tasks...</div>
+      <div className="text-center py-12">
+        <div className="spinner-border text-teal-500" role="status">
+          <span className="visually-hidden">Loading...</span>
         </div>
+        <p className="text-gray-400 mt-2">Loading tasks...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="alert alert-danger">
-        <i className="bi bi-exclamation-triangle me-2"></i>
-        {error}
+      <div className="text-center py-12">
+        <p className="text-red-500 font-medium">{error}</p>
+        <button
+          className="mt-4 px-4 py-2 bg-teal-500 text-white rounded hover:bg-teal-600 transition-colors"
+          onClick={fetchTasks}
+        >
+          Retry
+        </button>
       </div>
     );
   }
 
   return (
-    <div>
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <div>
-          <h2 className="text-gold">Work To Do</h2>
-          <small className="text-muted">Tasks assigned to you</small>
-        </div>
-        <button
-          className="btn btn-outline-primary btn-sm"
-          onClick={refreshTasks}
-          disabled={loading}
-        >
-          <i className="bi bi-arrow-clockwise me-1"></i>
-          Refresh
-        </button>
-      </div>
-
-      {pendingTasks.length === 0 && completedTasks.length === 0 ? (
-        <div className="alert alert-info">
-          <i className="bi bi-info-circle me-2"></i>
-          No tasks assigned to you at the moment.
-        </div>
-      ) : (
-        <div>
-          <div className="mb-4">
-            <h4 className="text-gold">Pending Tasks</h4>
+    <div style={{ padding: '20px', backgroundColor: '#000000', minHeight: '100vh' }}>
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'row', 
+        gap: '20px',
+        justifyContent: 'center',
+        alignItems: 'flex-start'
+      }}>
+        
+        {/* Left Block - Work to be Done */}
+        <div style={{
+          backgroundColor: '#000000',
+          borderRadius: '12px',
+          border: '2px solid #14b8a6',
+          padding: '24px',
+          width: '600px',
+          height: '600px',
+          overflow: 'hidden'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+            <h2 style={{ fontSize: '20px', fontWeight: '600', color: 'white', margin: 0 }}>
+              📋 Work to be Done
+            </h2>
+            <span style={{ 
+              fontSize: '14px', 
+              color: '#9ca3af', 
+              backgroundColor: '#000000', 
+              padding: '4px 8px', 
+              borderRadius: '4px',
+              border: '1px solid #14b8a6'
+            }}>
+              {pendingTasks.length} tasks
+            </span>
+          </div>
+          <div style={{ height: '500px', overflowY: 'auto' }}>
             {pendingTasks.length === 0 ? (
-              <p className="text-muted">No pending tasks</p>
+              <div style={{ textAlign: 'center', paddingTop: '100px' }}>
+                <div style={{ fontSize: '48px', marginBottom: '16px' }}>🎉</div>
+                <p style={{ color: '#9ca3af', fontWeight: '500', margin: '8px 0' }}>No tasks assigned</p>
+                <p style={{ color: '#6b7280', fontSize: '14px', margin: 0 }}>You're all caught up!</p>
+              </div>
             ) : (
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {pendingTasks.map(task => (
                   <div
                     key={task.id}
@@ -145,62 +163,101 @@ const TodoList = () => {
                       borderRadius: '8px',
                       padding: '20px',
                       width: '540px',
-                      minHeight: '140px',
+                      height: '60px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
                       cursor: 'pointer',
                       transition: 'all 0.2s',
-                      border: `1px solid ${task.isOverdue ? '#dc3545' : '#14b8a6'}`,
-                      opacity: hoveredTask === task.id ? 0.9 : 1
+                      border: '1px solid #14b8a6',
+                      position: 'relative'
                     }}
                     onMouseEnter={() => setHoveredTask(task.id)}
                     onMouseLeave={() => setHoveredTask(null)}
-                    onClick={() => handleViewDetails(task)}
                   >
-                    <div>
-                      <h3
+                    <h3 
+                      style={{ 
+                        fontSize: '18px', 
+                        fontWeight: '500', 
+                        color: 'white', 
+                        margin: 0,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        textAlign: 'center'
+                      }}
+                      onClick={() => handleViewDetails(task)}
+                    >
+                      {task.task}
+                    </h3>
+                    
+                    {hoveredTask === task.id && (
+                      <div
                         style={{
-                          fontSize: '18px',
-                          fontWeight: '500',
-                          color: 'white',
-                          margin: '0 0 8px 0',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap'
+                          position: 'absolute',
+                          right: '20px',
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          backgroundColor: '#10b981',
+                          borderRadius: '50%',
+                          padding: '6px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
                         }}
-                      >
-                        {task.task}
-                      </h3>
-                      <p
-                        style={{
-                          fontSize: '14px',
-                          color: task.isOverdue ? '#dc3545' : '#14b8a6',
-                          margin: '0 0 8px 0'
-                        }}
-                      >
-                        Deadline: {new Date(task.deadline).toLocaleString()}
-                        {task.isOverdue && ' (Overdue)'}
-                      </p>
-                      <button
-                        className="btn btn-primary btn-sm"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleComplete(task);
                         }}
+                        title="Mark as complete"
                       >
-                        Mark as Complete
-                      </button>
-                    </div>
+                        <svg width="16" height="16" fill="none" stroke="white" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
             )}
           </div>
+        </div>
 
-          <div>
-            <h4 className="text-gold">Under Review</h4>
+        {/* Right Block - Submitted Work (Awaiting Review) */}
+        <div style={{
+          backgroundColor: '#000000',
+          borderRadius: '12px',
+          border: '2px solid #14b8a6',
+          padding: '24px',
+          width: '600px',
+          height: '600px',
+          overflow: 'hidden'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+            <h2 style={{ fontSize: '20px', fontWeight: '600', color: 'white', margin: 0 }}>
+              ⏳ Awaiting Review
+            </h2>
+            <span style={{ 
+              fontSize: '14px', 
+              color: '#9ca3af', 
+              backgroundColor: '#000000', 
+              padding: '4px 8px', 
+              borderRadius: '4px',
+              border: '1px solid #14b8a6'
+            }}>
+              {completedTasks.length} tasks
+            </span>
+          </div>
+          <div style={{ height: '500px', overflowY: 'auto' }}>
             {completedTasks.length === 0 ? (
-              <p className="text-muted">No tasks under review</p>
+              <div style={{ textAlign: 'center', paddingTop: '100px' }}>
+                <div style={{ fontSize: '48px', marginBottom: '16px' }}>📋</div>
+                <p style={{ color: '#9ca3af', fontWeight: '500', margin: '8px 0' }}>No work awaiting review</p>
+                <p style={{ color: '#6b7280', fontSize: '14px', margin: 0 }}>Submitted tasks will appear here until reviewed</p>
+              </div>
             ) : (
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {completedTasks.map(task => (
                   <div
                     key={task.id}
@@ -220,11 +277,11 @@ const TodoList = () => {
                     onClick={() => handleViewDetails(task)}
                   >
                     <div style={{ textAlign: 'center', width: '100%' }}>
-                      <h3
-                        style={{
-                          fontSize: '18px',
-                          fontWeight: '500',
-                          color: 'white',
+                      <h3 
+                        style={{ 
+                          fontSize: '18px', 
+                          fontWeight: '500', 
+                          color: 'white', 
                           margin: '0 0 8px 0',
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
@@ -248,18 +305,20 @@ const TodoList = () => {
             )}
           </div>
         </div>
-      )}
+        
+      </div>
 
+      {/* Modals */}
       {selectedTask && (
-        <CompletionModal
-          task={selectedTask}
-          onClose={handleCloseModal}
-          onUpdate={refreshTasks}
+        <CompletionModal 
+          task={selectedTask} 
+          onClose={handleCloseModal} 
+          onUpdate={refreshTasks} 
         />
       )}
       {detailTask && (
-        <TaskDetailModal
-          task={detailTask}
+        <TaskDetailModal 
+          task={detailTask} 
           onClose={handleCloseDetailModal}
         />
       )}
