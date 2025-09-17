@@ -1,3 +1,4 @@
+// src/components/TaskForm.js
 import React, { useState } from 'react';
 
 const TaskForm = ({ workerId, workerEmail, onTaskAssigned }) => {
@@ -6,10 +7,12 @@ const TaskForm = ({ workerId, workerEmail, onTaskAssigned }) => {
   const [instructions, setInstructions] = useState('');
   const [deadline, setDeadline] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
 
     try {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/work/assign`, {
@@ -38,23 +41,30 @@ const TaskForm = ({ workerId, workerEmail, onTaskAssigned }) => {
         }
       } else {
         const error = await response.json();
-        alert('Error assigning task: ' + error.message);
+        setError(`Error assigning task: ${error.message}`);
+        alert(`Error assigning task: ${error.message}`);
       }
     } catch (error) {
       console.error('Error assigning task:', error);
-      alert('Error assigning task: ' + error.message);
+      setError(`Network error: ${error.message}`);
+      alert(`Network error: ${error.message}`);
     } finally {
       setLoading(false);
     }
   };
 
-  // Set minimum datetime to current time
   const now = new Date();
-  const minDateTime = now.toISOString().slice(0, 16); // Format: YYYY-MM-DDTHH:mm
+  const minDateTime = now.toISOString().slice(0, 16);
 
   return (
     <div className="border-top pt-3">
       <h5 className="mb-3 text-gold">Assign New Task to {workerEmail}</h5>
+      {error && (
+        <div className="alert alert-danger">
+          <i className="bi bi-exclamation-triangle me-2"></i>
+          {error}
+        </div>
+      )}
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label className="form-label">Task Title:</label>
@@ -81,7 +91,6 @@ const TaskForm = ({ workerId, workerEmail, onTaskAssigned }) => {
             value={description} 
             onChange={e => setDescription(e.target.value)} 
             placeholder="Detailed description of what needs to be accomplished..."
-            required 
             disabled={loading}
           />
           <small className="form-text text-muted">
