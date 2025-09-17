@@ -1,4 +1,4 @@
-// WorkerDashboard.js - Clean version with debug panels removed
+// WorkerDashboard.js - Black background version
 import React, { useState, useEffect } from 'react';
 import TodoList from '../components/TodoList';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -148,12 +148,12 @@ const WorkerDashboard = () => {
   };
 
   if (!user && !authError) {
-    return <div style={{ color: '#ffffff', textAlign: 'center', backgroundColor: '#000000ff' }}>Loading...</div>;
+    return <div style={{ color: '#ffffff', textAlign: 'center', backgroundColor: '#000000', minHeight: '100vh' }}>Loading...</div>;
   }
 
   if (authError) {
     return (
-      <div style={{ color: '#ffffff', textAlign: 'center', backgroundColor: '#000000ff', padding: '20px' }}>
+      <div style={{ color: '#ffffff', textAlign: 'center', backgroundColor: '#000000', padding: '20px', minHeight: '100vh' }}>
         <h3>Authentication Error</h3>
         <p>{authError}</p>
         <button onClick={() => navigate('/')} className="btn btn-primary">
@@ -164,12 +164,12 @@ const WorkerDashboard = () => {
   }
 
   return (
-    <div className="container-fluid" style={{ backgroundColor: '#000000ff' }}>
-      <nav className="navbar navbar-light bg-light border-bottom mb-4">
+    <div className="container-fluid" style={{ backgroundColor: '#000000', minHeight: '100vh' }}>
+      <nav className="navbar navbar-light border-bottom mb-4" style={{ backgroundColor: '#000000', borderBottomColor: '#00A3AD' }}>
         <div className="container-fluid">
           <div>
-            <span className="navbar-brand mb-0 h1">Worker Dashboard</span>
-            <small className="text-muted d-block">
+            <span className="navbar-brand mb-0 h1" style={{ color: '#00A3AD' }}>Worker Dashboard</span>
+            <small className="text-muted d-block" style={{ color: '#ffffff' }}>
               Welcome, {user.name} ({user.email})
             </small>
             {googleCalendarStatus !== null && (
@@ -208,7 +208,7 @@ const WorkerDashboard = () => {
 
       {/* Google Calendar Connection Prompt */}
       {showGooglePrompt && (
-        <div className="alert alert-info alert-dismissible mx-3 mb-3" role="alert">
+        <div className="alert alert-info alert-dismissible mx-3 mb-3" role="alert" style={{ backgroundColor: 'rgba(0, 163, 173, 0.1)', borderColor: '#00A3AD', color: '#00A3AD' }}>
           <h6 className="alert-heading">Connect Google Calendar</h6>
           <p className="mb-2">
             Connect your Google Calendar to automatically sync your TaskPilot deadlines. 
