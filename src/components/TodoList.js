@@ -1,4 +1,4 @@
-// TodoList.js - Fixed version
+// TodoList.js - Fixed version with black backgrounds
 import React, { useState, useEffect } from 'react';
 import CompletionModal from './CompletionModal';
 import TaskDetailModal from './TaskDetailModal';
@@ -112,7 +112,7 @@ const TodoList = () => {
   }
 
   return (
-    <div style={{ padding: '20px', backgroundColor: '#333333', minHeight: '100vh' }}>
+    <div style={{ padding: '20px', backgroundColor: '#000000', minHeight: '100vh' }}>
       <div style={{ 
         display: 'flex', 
         flexDirection: 'row', 
@@ -123,7 +123,7 @@ const TodoList = () => {
         
         {/* Left Block - Work to be Done */}
         <div style={{
-          backgroundColor: '#1f2937',
+          backgroundColor: '#000000',
           borderRadius: '12px',
           border: '2px solid #14b8a6',
           padding: '24px',
@@ -138,9 +138,10 @@ const TodoList = () => {
             <span style={{ 
               fontSize: '14px', 
               color: '#9ca3af', 
-              backgroundColor: '#374151', 
+              backgroundColor: '#000000', 
               padding: '4px 8px', 
-              borderRadius: '4px' 
+              borderRadius: '4px',
+              border: '1px solid #14b8a6'
             }}>
               {pendingTasks.length} tasks
             </span>
@@ -158,7 +159,7 @@ const TodoList = () => {
                   <div
                     key={task.id}
                     style={{
-                      backgroundColor: '#374151',
+                      backgroundColor: '#000000',
                       borderRadius: '8px',
                       padding: '20px',
                       width: '540px',
@@ -168,7 +169,7 @@ const TodoList = () => {
                       justifyContent: 'center',
                       cursor: 'pointer',
                       transition: 'all 0.2s',
-                      border: '1px solid #4b5563',
+                      border: '1px solid #14b8a6',
                       position: 'relative'
                     }}
                     onMouseEnter={() => setHoveredTask(task.id)}
@@ -225,7 +226,7 @@ const TodoList = () => {
 
         {/* Right Block - Submitted Work (Awaiting Review) */}
         <div style={{
-          backgroundColor: '#1f2937',
+          backgroundColor: '#000000',
           borderRadius: '12px',
           border: '2px solid #14b8a6',
           padding: '24px',
@@ -240,9 +241,10 @@ const TodoList = () => {
             <span style={{ 
               fontSize: '14px', 
               color: '#9ca3af', 
-              backgroundColor: '#374151', 
+              backgroundColor: '#000000', 
               padding: '4px 8px', 
-              borderRadius: '4px' 
+              borderRadius: '4px',
+              border: '1px solid #14b8a6'
             }}>
               {completedTasks.length} tasks
             </span>
@@ -260,7 +262,7 @@ const TodoList = () => {
                   <div
                     key={task.id}
                     style={{
-                      backgroundColor: '#374151',
+                      backgroundColor: '#000000',
                       borderRadius: '8px',
                       padding: '20px',
                       width: '540px',
@@ -270,7 +272,7 @@ const TodoList = () => {
                       justifyContent: 'center',
                       cursor: 'pointer',
                       transition: 'all 0.2s',
-                      border: '1px solid #4b5563'
+                      border: '1px solid #14b8a6'
                     }}
                     onClick={() => handleViewDetails(task)}
                   >
